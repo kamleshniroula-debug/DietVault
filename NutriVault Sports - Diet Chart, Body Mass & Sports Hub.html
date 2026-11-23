@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriVault Sports — Diet Chart, Body Mass & Sports Nutrition Hub</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Clean Clinic Print / PDF Diet Chart */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-diet-chart,
+      #printable-diet-chart * {
+        visibility: visible !important;
+      }
+      #printable-diet-chart {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding: 20px !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 lg:pb-10">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-20 lg:bottom-6 right-5 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
+
+  <!-- ===================================================================== -->
+  <!-- CLEAN TOP NAVIGATION BAR (Spacious & High-Contrast)                   -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-2xs no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="h-16 flex items-center justify-between gap-4">
+        <!-- Brand Logo -->
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-xs">
+            <i data-lucide="activity" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-lg tracking-tight text-slate-900">NutriVault</span>
+              <span class="text-[11px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-brand-100 text-brand-800">Sports</span>
+            </div>
+            <p class="text-[11px] text-slate-500 hidden sm:block">Sports Dietitian & Athlete Performance Workspace</p>
+          </div>
+        </div>
+
+        <!-- Primary Desktop Workspace Tabs (5 Clear Modules) -->
+        <nav class="hidden lg:flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/70">
+          <button data-tab="dietchart" onclick="switchTab('dietchart')" class="top-tab px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition">
+            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+            Diet Chart Builder
+          </button>
+          <button data-tab="bodymass" onclick="switchTab('bodymass')" class="top-tab px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition">
+            <i data-lucide="scale" class="w-4 h-4"></i>
+            Body Mass Check
+          </button>
+          <button data-tab="knowledge" onclick="switchTab('knowledge')" class="top-tab px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            Sports Knowledge Hub
+          </button>
+          <button data-tab="calculators" onclick="switchTab('calculators')" class="top-tab px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition">
+            <i data-lucide="calculator" class="w-4 h-4"></i>
+            Calculators
+          </button>
+          <button data-tab="foods" onclick="switchTab('foods')" class="top-tab px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition">
+            <i data-lucide="utensils" class="w-4 h-4"></i>
+            Food & Nepali DB
+          </button>
+        </nav>
+
+        <!-- Right Backup / Reset Utilities -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="exportAllData()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 transition" title="Export JSON Backup">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Backup</span>
+          </button>
+          <label class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer" title="Import JSON Backup">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Restore</span>
+            <input type="file" accept=".json" onchange="importAllData(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Athlete Context Strip (Always visible & easy to switch) -->
+    <div class="bg-brand-50/70 border-t border-brand-200/70">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span class="font-bold text-brand-900 flex items-center gap-1.5">
+            <i data-lucide="user-check" class="w-3.5 h-3.5 text-brand-700"></i>
+            Active Athlete:
+          </span>
+          <span id="strip-athlete-summary" class="font-semibold text-slate-800 bg-white px-2.5 py-0.5 rounded-lg border border-brand-200">
+            Aarav Shrestha • 21 yrs (Collegiate 18–24) • Endurance • 64.0 kg (FFM: 55.0 kg)
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="switchTab('bodymass')" class="text-brand-800 hover:text-brand-950 font-bold underline">
+            Update Body Mass →
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Bottom Tab Navigation -->
+  <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-slate-200 grid grid-cols-5 py-1.5 px-1 shadow-lg no-print">
+    <button data-tab="dietchart" onclick="switchTab('dietchart')" class="mobile-tab flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-semibold">
+      <i data-lucide="clipboard-list" class="w-4 h-4 mb-0.5"></i>
+      Diet Chart
+    </button>
+    <button data-tab="bodymass" onclick="switchTab('bodymass')" class="mobile-tab flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-semibold">
+      <i data-lucide="scale" class="w-4 h-4 mb-0.5"></i>
+      Body Mass
+    </button>
+    <button data-tab="knowledge" onclick="switchTab('knowledge')" class="mobile-tab flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-semibold">
+      <i data-lucide="book-open" class="w-4 h-4 mb-0.5"></i>
+      Studies/Hub
+    </button>
+    <button data-tab="calculators" onclick="switchTab('calculators')" class="mobile-tab flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-semibold">
+      <i data-lucide="calculator" class="w-4 h-4 mb-0.5"></i>
+      Calculators
+    </button>
+    <button data-tab="foods" onclick="switchTab('foods')" class="mobile-tab flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-semibold">
+      <i data-lucide="utensils" class="w-4 h-4 mb-0.5"></i>
+      Foods DB
+    </button>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN WORKSPACE CONTAINER                                              -->
+  <!-- ===================================================================== -->
+  <main id="main-workspace" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <!-- Rendered dynamically per active tab -->
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: ADD FOOD / MEAL ITEM TO DIET CHART SLOT                      -->
+  <!-- ===================================================================== -->
+  <div id="meal-item-modal" class="fixed inset-0 z-50 hidden overflow-y-auto no-print">
+    <div onclick="closeMealItemModal()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <div>
+            <h3 class="text-lg font-extrabold text-slate-900">Add Food / Fuel to Meal Slot</h3>
+            <p id="meal-modal-slot-label" class="text-xs font-semibold text-brand-700">Slot: Breakfast</p>
+          </div>
+          <button onclick="closeMealItemModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-5 max-h-[82vh] overflow-y-auto">
+          <input type="hidden" id="meal-modal-slot-id" />
+
+          <!-- Quick Pick from Sports & Nepali Food DB -->
+          <div class="space-y-3">
+            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-500">1. Quick-Pick from Sports & Nepali Athlete Foods</label>
+            <input
+              id="meal-food-search"
+              type="text"
+              oninput="renderMealModalFoodList()"
+              placeholder="Search chiura, sattu, eggs, paneer, banana, dal, chicken, rice..."
+              class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-600"
+            />
+
+            <!-- Portion Size Selector -->
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold text-slate-600">Portion Weight (grams):</span>
+              <button type="button" onclick="setMealPortion(50)" class="portion-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white hover:bg-brand-50">50g</button>
+              <button type="button" onclick="setMealPortion(100)" class="portion-btn px-3 py-1 rounded-lg text-xs font-bold border border-brand-600 bg-brand-600 text-white">100g</button>
+              <button type="button" onclick="setMealPortion(150)" class="portion-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white hover:bg-brand-50">150g</button>
+              <button type="button" onclick="setMealPortion(200)" class="portion-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white hover:bg-brand-50">200g</button>
+              <input id="meal-portion-grams" type="number" min="5" max="1000" value="100" oninput="renderMealModalFoodList()" class="w-24 px-2.5 py-1 text-xs font-bold border border-slate-200 rounded-lg" />
+              <span class="text-xs text-slate-400">g</span>
+            </div>
+
+            <!-- Filtered Food Picker Cards -->
+            <div id="meal-modal-food-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-60 overflow-y-auto pr-1"></div>
+          </div>
+
+          <!-- Divider -->
+          <div class="relative flex py-1 items-center">
+            <div class="grow border-t border-slate-200"></div>
+            <span class="shrink mx-3 text-xs font-bold uppercase text-slate-400">OR Add Custom Meal / Hydration Note</span>
+            <div class="grow border-t border-slate-200"></div>
+          </div>
+
+          <!-- Custom Meal Entry Form -->
+          <form onsubmit="handleCustomMealItemSubmit(event)" class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Custom Food / Drink Description *</label>
+                <input required name="customName" placeholder="e.g., 500 mL Isotonic Electrolyte Drink + 1 Gel" class="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Serving Label</label>
+                <input name="customServing" placeholder="e.g., 1 bottle / 1 bowl" class="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl" />
+              </div>
+            </div>
+            <div class="grid grid-cols-4 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Calories (kcal)</label>
+                <input required type="number" step="1" name="kcal" value="220" class="w-full px-2.5 py-2 text-sm bg-white border border-slate-200 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Carbs (g)</label>
+                <input required type="number" step="0.1" name="carbs" value="52" class="w-full px-2.5 py-2 text-sm bg-white border border-slate-200 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Protein (g)</label>
+                <input required type="number" step="0.1" name="protein" value="0" class="w-full px-2.5 py-2 text-sm bg-white border border-slate-200 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Fat (g)</label>
+                <input required type="number" step="0.1" name="fat" value="0" class="w-full px-2.5 py-2 text-sm bg-white border border-slate-200 rounded-xl" />
+              </div>
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition">
+              + Add Custom Item to Slot
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: ADD / EDIT KNOWLEDGE HUB ENTRY (Studies, Protocols, Tips)    -->
+  <!-- ===================================================================== -->
+  <div id="knowledge-modal" class="fixed inset-0 z-50 hidden overflow-y-auto no-print">
+    <div onclick="closeKnowledgeModal()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <div>
+            <h3 id="knowledge-modal-title" class="text-lg font-extrabold text-slate-900">Add Sports Science Entry</h3>
+            <p class="text-xs text-slate-500">Categorize by Athlete Age Stage & Sport Category.</p>
+          </div>
+          <button onclick="closeKnowledgeModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <form onsubmit="handleKnowledgeSubmit(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
+          <input type="hidden" id="kh-id" />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Entry Type *</label>
+              <select id="kh-type" onchange="toggleKnowledgeFormFields(this.value)" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white">
+                <option value="protocol">Fueling Protocol</option>
+                <option value="study">Scientific Study (PubMed/DOI)</option>
+                <option value="tip">Coaching Cue / Tip</option>
+                <option value="supplement">AIS Supplement & WADA Gate</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-indigo-700 mb-1">Age Stage *</label>
+              <select id="kh-age" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white">
+                <option value="Youth / Child (8–12 yrs)">Youth / Child (8–12 yrs)</option>
+                <option value="Adolescent / Junior (13–17 yrs)">Adolescent / Junior (13–17 yrs)</option>
+                <option value="Collegiate / Young Adult (18–24 yrs)" selected>Collegiate (18–24 yrs)</option>
+                <option value="Senior Elite / Adult (25–34 yrs)">Senior Elite (25–34 yrs)</option>
+                <option value="Masters Athlete (35+ yrs)">Masters Athlete (35+ yrs)</option>
+                <option value="All Ages">All Ages</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-brand-700 mb-1">Sport Category *</label>
+              <select id="kh-sport" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white">
+                <option value="Endurance">Endurance</option>
+                <option value="Team & Field Sports">Team & Field Sports</option>
+                <option value="Strength & Power">Strength & Power</option>
+                <option value="Combat & Weight-Class">Combat & Weight-Class</option>
+                <option value="Racquet & Court">Racquet & Court</option>
+                <option value="All Sports">All Sports</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- PubMed / DOI Quick Fetch Bar (Shown for Studies) -->
+          <div id="kh-doi-box" class="hidden bg-sky-50 border border-sky-200 rounded-xl p-3.5 space-y-2">
+            <label class="block text-xs font-bold text-sky-900">1-Click Import via DOI or PubMed ID/URL</label>
+            <div class="flex gap-2">
+              <input id="kh-doi-input" type="text" placeholder="e.g. 10.1136/bjsports-2023-106994 or PubMed ID" class="flex-1 px-3 py-2 text-xs bg-white border border-sky-200 rounded-xl" />
+              <button type="button" id="kh-fetch-btn" onclick="fetchPubMedOrDoi()" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shrink-0">
+                Fetch Citation
+              </button>
+            </div>
+            <p id="kh-fetch-status" class="text-[11px] hidden"></p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Title / Headline *</label>
+            <input required id="kh-title" placeholder="Enter protocol, study, supplement, or tip title..." class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label id="kh-meta1-label" class="block text-xs font-bold text-slate-700 mb-1">Timing / Journal / AIS Tier</label>
+              <input id="kh-meta1" placeholder="e.g., T-3h Pre-Event or AIS Group A" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+            <div>
+              <label id="kh-meta2-label" class="block text-xs font-bold text-slate-700 mb-1">Targets / Year / Age Safety Gate</label>
+              <input id="kh-meta2" placeholder="e.g., 6–10 g/kg CHO or 18+ Only" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Clinical & Performance Details / Takeaway *</label>
+            <textarea required id="kh-summary" rows="4" placeholder="Write practical dosing, fueling guidelines, study findings, or coaching instructions..." class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">DOI / PubMed URL or Contraindication Note (Optional)</label>
+            <input id="kh-extra" placeholder="https://doi.org/... or safety precaution" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl" />
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+            <button type="button" onclick="closeKnowledgeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">Cancel</button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold">Save Entry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: ADD NEW FOOD TO SPORTS & NEPALI DATABASE                     -->
+  <!-- ===================================================================== -->
+  <div id="new-food-modal" class="fixed inset-0 z-50 hidden overflow-y-auto no-print">
+    <div onclick="closeNewFoodModal()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <h3 class="text-base font-extrabold text-slate-900">Add Food to Database (per 100g)</h3>
+          <button onclick="closeNewFoodModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <form onsubmit="handleNewFoodSubmit(event)" class="p-6 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Food Name *</label>
+              <input required name="name" placeholder="e.g., Black Gram (Kalo Dal)" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Category *</label>
+              <select name="category" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white">
+                <option value="Nepali & South Asian Staples">Nepali & South Asian Staples</option>
+                <option value="Pre-Event Low-Fiber Carbs">Pre-Event Low-Fiber Carbs</option>
+                <option value="Recovery Proteins">Recovery Proteins</option>
+                <option value="Healthy Fats & Micronutrients">Healthy Fats & Micronutrients</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Kcal *</label>
+              <input required type="number" step="0.1" name="kcal" placeholder="340" class="w-full px-2.5 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Carbs (g)*</label>
+              <input required type="number" step="0.1" name="carbs" placeholder="59" class="w-full px-2.5 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Protein (g)*</label>
+              <input required type="number" step="0.1" name="protein" placeholder="25" class="w-full px-2.5 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Fat (g)*</label>
+              <input required type="number" step="0.1" name="fat" placeholder="1.4" class="w-full px-2.5 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Fiber (g)</label>
+              <input type="number" step="0.1" name="fiber" placeholder="10" class="w-full px-2.5 py-2 text-sm border border-slate-200 rounded-xl" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Sports Fueling Note</label>
+            <input name="notes" placeholder="e.g., High plant protein + iron for base training recovery" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl" />
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+            <button type="button" onclick="closeNewFoodModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">Cancel</button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold">Add Food</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT APPLICATION ENGINE                                         -->
+  <!-- ===================================================================== -->
+  <script>
+    const STORAGE_KEYS = {
+      ATHLETE: 'nv_sports_athlete_v3',
+      HISTORY: 'nv_sports_body_history_v3',
+      DIET_CHART: 'nv_sports_diet_chart_v3',
+      KNOWLEDGE: 'nv_sports_knowledge_v3',
+      FOODS: 'nv_sports_foods_v3'
+    };
+
+    const AGE_GROUPS = [
+      'All Ages',
+      'Youth / Child (8–12 yrs)',
+      'Adolescent / Junior (13–17 yrs)',
+      'Collegiate / Young Adult (18–24 yrs)',
+      'Senior Elite / Adult (25–34 yrs)',
+      'Masters Athlete (35+ yrs)'
+    ];
+
+    const SPORT_CATEGORIES = [
+      'All Sports',
+      'Endurance',
+      'Team & Field Sports',
+      'Strength & Power',
+      'Combat & Weight-Class',
+      'Racquet & Court'
+    ];
+
+    const MEAL_SLOTS = [
+      { id: 'early', label: 'Early Morning / Wake-Up', time: '06:00 AM', windowTag: 'Hydration + CNS Activation' },
+      { id: 'breakfast', label: 'Breakfast', time: '07:30 AM', windowTag: 'Glycogen & Leucine Anchor' },
+      { id: 'pre', label: 'Pre-Training Fuel (T-60m)', time: '09:30 AM', windowTag: 'Fast Low-Fiber Carbs' },
+      { id: 'intra', label: 'Intra-Training / Hydration', time: '10:30 AM', windowTag: 'Electrolytes + 30–80g CHO/hr' },
+      { id: 'post', label: 'Post-Training Recovery (T+30m)', time: '12:00 PM', windowTag: '3:1 Carb:Protein Repair' },
+      { id: 'lunch', label: 'Lunch', time: '01:30 PM', windowTag: 'Balanced Micronutrient Plate' },
+      { id: 'snack', label: 'Evening Performance Snack', time: '05:00 PM', windowTag: 'Sustained Energy' },
+      { id: 'dinner', label: 'Dinner & Pre-Sleep Recovery', time: '08:00 PM', windowTag: 'Overnight MPS / Casein' }
+    ];
+
+    // Pre-populated Sports & Nepali Athlete Food Database (per 100g)
+    const DEFAULT_FOODS = [
+      { id: 'f-chiura', name: 'Beaten Rice (Chiura)', category: 'Nepali & South Asian Staples', kcal: 346, carbs: 77.3, protein: 6.6, fat: 1.2, fiber: 0.7, notes: 'Low fiber (0.7g) — ideal T-2h pre-race or carb-loading staple.' },
+      { id: 'f-sattu', name: 'Roasted Gram Flour (Sattu)', category: 'Nepali & South Asian Staples', kcal: 382, carbs: 63.5, protein: 20.6, fat: 5.5, fiber: 7.5, notes: 'High-protein plant recovery drink mix with banana & rock salt.' },
+      { id: 'f-rice', name: 'Cooked White Basmati Rice', category: 'Pre-Event Low-Fiber Carbs', kcal: 130, carbs: 28.2, protein: 2.7, fat: 0.3, fiber: 0.4, notes: 'Fast-digesting clean carbohydrate base with zero GI heaviness.' },
+      { id: 'f-dal', name: 'Cooked Masoor / Moong Dal (Thick)', category: 'Nepali & South Asian Staples', kcal: 116, carbs: 20.1, protein: 9.0, fat: 0.4, fiber: 3.8, notes: 'Rich in plant protein, folate & non-heme iron (pair with lemon).' },
+      { id: 'f-kodo', name: 'Finger Millet (Kodo / Ragi Flour)', category: 'Nepali & South Asian Staples', kcal: 328, carbs: 72.0, protein: 7.3, fat: 1.3, fiber: 11.5, notes: '344 mg calcium/100g — vital for adolescent bone mass & RED-S.' },
+      { id: 'f-phapar', name: 'Buckwheat Flour (Phapar)', category: 'Nepali & South Asian Staples', kcal: 335, carbs: 70.6, protein: 12.6, fat: 3.1, fiber: 10.0, notes: 'Gluten-free complex carb with magnesium & rutin.' },
+      { id: 'f-banana', name: 'Ripe Banana', category: 'Pre-Event Low-Fiber Carbs', kcal: 89, carbs: 22.8, protein: 1.1, fat: 0.3, fiber: 2.6, notes: 'Quick pre-training or halftime potassium + glucose/fructose fuel.' },
+      { id: 'f-dates', name: 'Medjool Dates', category: 'Pre-Event Low-Fiber Carbs', kcal: 277, carbs: 75.0, protein: 1.8, fat: 0.2, fiber: 6.7, notes: 'Portable 1:1 glucose:fructose endurance fuel (~18g CHO per date).' },
+      { id: 'f-oats', name: 'Rolled Oats (Dry)', category: 'Pre-Event Low-Fiber Carbs', kcal: 379, carbs: 67.7, protein: 13.2, fat: 6.5, fiber: 10.1, notes: 'Sustained-release breakfast carbohydrate + beta-glucan.' },
+      { id: 'f-eggs', name: 'Whole Boiled / Poached Eggs', category: 'Recovery Proteins', kcal: 155, carbs: 1.1, protein: 13.0, fat: 11.0, fiber: 0.0, notes: '100% bioavailability + ~1.1g leucine per 2 eggs.' },
+      { id: 'f-chicken', name: 'Grilled Chicken Breast (Skinless)', category: 'Recovery Proteins', kcal: 165, carbs: 0.0, protein: 31.0, fat: 3.6, fiber: 0.0, notes: 'Lean complete protein (~2.7g leucine per 100g).' },
+      { id: 'f-paneer', name: 'Fresh Paneer (Cottage Cheese)', category: 'Recovery Proteins', kcal: 265, carbs: 1.2, protein: 18.3, fat: 20.8, fiber: 0.0, notes: 'Slow-release casein protein ideal for pre-sleep muscle repair.' },
+      { id: 'f-curd', name: 'Greek Yogurt / Thick Curd (Dahi)', category: 'Recovery Proteins', kcal: 97, carbs: 3.6, protein: 9.0, fat: 5.0, fiber: 0.0, notes: 'Probiotic gut support + calcium + fast/slow dairy proteins.' },
+      { id: 'f-whey', name: 'Batch-Tested Whey Protein Isolate', category: 'Recovery Proteins', kcal: 370, carbs: 2.0, protein: 86.0, fat: 1.5, fiber: 0.0, notes: 'NSF/Informed Sport certified rapid post-session amino delivery.' },
+      { id: 'f-pb', name: 'Natural Peanut Butter', category: 'Healthy Fats & Micronutrients', kcal: 588, carbs: 20.0, protein: 25.0, fat: 50.0, fiber: 6.0, notes: 'Calorie-dense healthy fats for high-expenditure athletes.' },
+      { id: 'f-almonds', name: 'Almonds & Walnuts Mix', category: 'Healthy Fats & Micronutrients', kcal: 615, carbs: 17.5, protein: 18.0, fat: 56.0, fiber: 9.5, notes: 'Omega-3 ALA, vitamin E & magnesium for recovery.' }
+    ];
+
+    const DEFAULT_KNOWLEDGE = [
+      {
+        id: 'kh-1',
+        type: 'protocol',
+        ageGroups: 'Collegiate / Young Adult (18–24 yrs)',
+        sportCategories: 'Endurance',
+        title: '48-Hour Glycogen Supercompensation Protocol',
+        meta1: 'T-48h Pre-Race → Race Morning',
+        meta2: '10–12 g/kg/d Carbs | <15g Fiber in final 24h',
+        summary: 'Elevate carbohydrate intake to 10–12 g/kg/day for 36–48 hours prior to races >90 min using low-fiber starches (white rice, chiura, ripe bananas, honey). Expect 1.5–2 kg intracellular water storage (~3g water/g glycogen).',
+        extra: 'ACSM / IOC Endurance Nutrition Consensus'
+      },
+      {
+        id: 'kh-2',
+        type: 'protocol',
+        ageGroups: 'Adolescent / Junior (13–17 yrs)',
+        sportCategories: 'Team & Field Sports',
+        title: 'Adolescent Growth & Tournament Recovery Fueling',
+        meta1: 'Every 3–4 Hours + Tournament Breaks',
+        meta2: 'EA ≥45 kcal/kg FFM | 1,300 mg Calcium | 15 mg Iron',
+        summary: 'Prioritize Peak Height Velocity bone mineralization and RED-S prevention. Deliver 0.3 g/kg protein every 3–4h via whole foods (milk/curd, eggs, sattu, kodo millet, lentils + Vitamin C). Strictly avoid pre-workouts and caffeine under 18.',
+        extra: 'Sports Dietitians Australia Adolescent Position Stand'
+      },
+      {
+        id: 'kh-3',
+        type: 'study',
+        ageGroups: 'All Ages',
+        sportCategories: 'All Sports',
+        title: '2023 IOC Consensus Statement on Relative Energy Deficiency in Sport (REDs)',
+        meta1: 'British Journal of Sports Medicine (BJSM)',
+        meta2: '2023 • IOC Consensus',
+        summary: 'Establishes the IOC REDs CAT2 traffic-light assessment tool. Problematic Low Energy Availability (<30 kcal/kg FFM/day) impairs bone mineral density, reproductive hormones, thyroid T3, hepcidin-mediated iron absorption, and neuromuscular power in both sexes.',
+        extra: 'https://doi.org/10.1136/bjsports-2023-106994'
+      },
+      {
+        id: 'kh-4',
+        type: 'study',
+        ageGroups: 'Masters Athlete (35+ yrs)',
+        sportCategories: 'Strength & Power',
+        title: 'Vitamin C-Enriched Gelatin Supplementation Before Activity Augments Collagen Synthesis',
+        meta1: 'American Journal of Clinical Nutrition (AJCN)',
+        meta2: '2017 • RCT',
+        summary: 'Consuming 15 g gelatin/collagen + 50 mg Vitamin C 60 minutes prior to targeted loading doubled PINP collagen synthesis markers and improved ligament tensile mechanics—valuable for Masters tendon resilience and ACL/Achilles rehab.',
+        extra: 'https://doi.org/10.3945/ajcn.116.138594'
+      },
+      {
+        id: 'kh-5',
+        type: 'supplement',
+        ageGroups: 'Collegiate / Young Adult (18–24 yrs)',
+        sportCategories: 'Strength & Power',
+        title: 'Creatine Monohydrate (AIS Group A)',
+        meta1: 'AIS Group A (Strong Evidence)',
+        meta2: '18+ Only • 3–5 g/day (0.08 g/kg/d)',
+        summary: 'Daily maintenance dosing of 3–5 g/day with a carb/protein meal saturates intramuscular phosphocreatine in 21–28 days without GI distress. Mandatory NSF Certified for Sport or Informed Sport batch verification.',
+        extra: 'Causes 1–1.5 kg water weight gain; pause 10–14d before weigh-in in weight-class sports.'
+      },
+      {
+        id: 'kh-6',
+        type: 'tip',
+        ageGroups: 'Youth / Child (8–12 yrs)',
+        sportCategories: 'Team & Field Sports',
+        title: 'The "4-Gulp Every Changeover" Youth Hydration Rule',
+        meta1: 'Youth Heat & Tournament Hydration',
+        meta2: '150–200 mL every 15–20 min',
+        summary: 'Children have immature thirst cues and higher metabolic heat production per kg. Equip each young athlete with a marked bottle and enforce 4 big gulps at every whistle, drink break, or changeover.',
+        extra: 'Check morning urine color against a pale-lemonade chart.'
+      }
+    ];
+
+    // Default Active Athlete & Body Mass History
+    const DEFAULT_ATHLETE = {
+      name: 'Aarav Shrestha',
+      age: 21,
+      sex: 'male',
+      ageGroup: 'Collegiate / Young Adult (18–24 yrs)',
+      sportCategory: 'Endurance',
+      phase: 'Pre-Season / High Volume',
+      heightCm: 174,
+      weightKg: 64.0,
+      bodyFatPct: 14.0,
+      waistCm: 74,
+      muacCm: 29.5,
+      targetKcal: 2850,
+      targetCarbsG: 448,   // 7.0 g/kg
+      targetProteinG: 115, // 1.8 g/kg
+      targetFatG: 66,      // ~1.0 g/kg
+      clinicHeader: 'Sports Nutrition & Athlete Performance Clinic',
+      dietitianName: 'Sports Dietitian (RD / MSc Sports Nutrition)',
+      coachNotes: 'Drink 500 mL water + pinch of rock salt upon waking. Practice race-pace carb intake during Saturday long session.'
+    };
+
+    const DEFAULT_HISTORY = [
+      {
+        date: '2026-10-12',
+        weightKg: 65.2,
+        bodyFatPct: 15.4,
+        ffmKg: 55.16,
+        fatMassKg: 10.04,
+        ffmi: 18.2,
+        phase: 'Off-Season Base'
+      },
+      {
+        date: '2026-11-23',
+        weightKg: 64.0,
+        bodyFatPct: 14.0,
+        ffmKg: 55.04,
+        fatMassKg: 8.96,
+        ffmi: 18.2,
+        phase: 'Pre-Season / High Volume'
+      }
+    ];
+
+    const DEFAULT_DIET_CHART = {
+      early: [
+        { id: 'm1', name: 'Ripe Banana', serving: '100g (1 med)', kcal: 89, carbs: 22.8, protein: 1.1, fat: 0.3 },
+        { id: 'm2', name: 'Almonds & Walnuts Mix', serving: '20g (handful)', kcal: 123, carbs: 3.5, protein: 3.6, fat: 11.2 }
+      ],
+      breakfast: [
+        { id: 'm3', name: 'Rolled Oats (Dry)', serving: '80g cooked', kcal: 303, carbs: 54.2, protein: 10.6, fat: 5.2 },
+        { id: 'm4', name: 'Whole Boiled / Poached Eggs', serving: '150g (3 eggs)', kcal: 233, carbs: 1.7, protein: 19.5, fat: 16.5 }
+      ],
+      pre: [
+        { id: 'm5', name: 'Beaten Rice (Chiura)', serving: '80g soaked', kcal: 277, carbs: 61.8, protein: 5.3, fat: 1.0 },
+        { id: 'm6', name: 'Ripe Banana', serving: '100g', kcal: 89, carbs: 22.8, protein: 1.1, fat: 0.3 }
+      ],
+      intra: [
+        { id: 'm7', name: 'Isotonic Sports Drink + Electrolytes (750 mL)', serving: '1 bottle', kcal: 180, carbs: 45.0, protein: 0.0, fat: 0.0 }
+      ],
+      post: [
+        { id: 'm8', name: 'Roasted Gram Flour (Sattu) Recovery Shake', serving: '60g in water', kcal: 229, carbs: 38.1, protein: 12.4, fat: 3.3 },
+        { id: 'm9', name: 'Medjool Dates', serving: '40g (2 dates)', kcal: 111, carbs: 30.0, protein: 0.7, fat: 0.1 }
+      ],
+      lunch: [
+        { id: 'm10', name: 'Cooked White Basmati Rice', serving: '250g', kcal: 325, carbs: 70.5, protein: 6.8, fat: 0.8 },
+        { id: 'm11', name: 'Cooked Masoor / Moong Dal (Thick)', serving: '150g', kcal: 174, carbs: 30.2, protein: 13.5, fat: 0.6 },
+        { id: 'm12', name: 'Grilled Chicken Breast (Skinless)', serving: '100g', kcal: 165, carbs: 0.0, protein: 31.0, fat: 3.6 }
+      ],
+      snack: [
+        { id: 'm13', name: 'Greek Yogurt / Thick Curd (Dahi)', serving: '150g', kcal: 146, carbs: 5.4, protein: 13.5, fat: 7.5 }
+      ],
+      dinner: [
+        { id: 'm14', name: 'Buckwheat Flour (Phapar) Roti / Pancake', serving: '100g flour', kcal: 335, carbs: 70.6, protein: 12.6, fat: 3.1 },
+        { id: 'm15', name: 'Fresh Paneer (Cottage Cheese)', serving: '80g', kcal: 212, carbs: 1.0, protein: 14.6, fat: 16.6 }
+      ]
+    };
+
+    // Global State
+    let state = {
+      activeTab: 'dietchart', // 'dietchart' | 'bodymass' | 'knowledge' | 'calculators' | 'foods'
+      athlete: null,
+      history: [],
+      dietChart: {},
+      knowledge: [],
+      foods: [],
+      selectedPortionGrams: 100,
+      khAgeFilter: 'All Ages',
+      khSportFilter: 'All Sports',
+      khTypeFilter: 'all',
+      khSearch: '',
+      foodSearch: '',
+      foodCatFilter: 'All'
+    };
+
+    // =========================================================================
+    // INITIALIZATION & STORAGE
+    // =========================================================================
+    function initApp() {
+      state.athlete = loadJSON(STORAGE_KEYS.ATHLETE, DEFAULT_ATHLETE);
+      state.history = loadJSON(STORAGE_KEYS.HISTORY, DEFAULT_HISTORY);
+      state.dietChart = loadJSON(STORAGE_KEYS.DIET_CHART, DEFAULT_DIET_CHART);
+      state.knowledge = loadJSON(STORAGE_KEYS.KNOWLEDGE, DEFAULT_KNOWLEDGE);
+      state.foods = loadJSON(STORAGE_KEYS.FOODS, DEFAULT_FOODS);
+
+      updateActiveAthleteStrip();
+      switchTab('dietchart');
+      lucide.createIcons();
+    }
+
+    function loadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {
+        console.error(e);
+      }
+      return JSON.parse(JSON.stringify(fallback));
+    }
+
+    function saveAll() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.ATHLETE, JSON.stringify(state.athlete));
+        localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(state.history));
+        localStorage.setItem(STORAGE_KEYS.DIET_CHART, JSON.stringify(state.dietChart));
+        localStorage.setItem(STORAGE_KEYS.KNOWLEDGE, JSON.stringify(state.knowledge));
+        localStorage.setItem(STORAGE_KEYS.FOODS, JSON.stringify(state.foods));
+      } catch (e) {
+        console.error(e);
+      }
+      updateActiveAthleteStrip();
+    }
+
+    function updateActiveAthleteStrip() {
+      const a = state.athlete;
+      const ffm = (a.weightKg * (1 - a.bodyFatPct / 100)).toFixed(1);
+      const shortAge = a.ageGroup.split(' (')[0];
+      const stripEl = document.getElementById('strip-athlete-summary');
+      if (stripEl) {
+        stripEl.textContent = `${a.name || 'Athlete'} • ${a.age} yrs (${shortAge}) • ${a.sportCategory} • ${a.weightKg} kg (FFM: ${ffm} kg)`;
+      }
+    }
+
+    // =========================================================================
+    // NAVIGATION & TAB SWITCHING
+    // =========================================================================
+    function switchTab(tab) {
+      state.activeTab = tab;
+
+      // Highlight Desktop Tabs
+      document.querySelectorAll('.top-tab').forEach(btn => {
+        const active = btn.dataset.tab === tab;
+        btn.className = active
+          ? 'top-tab px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 bg-white text-brand-800 shadow-xs ring-1 ring-slate-200 transition'
+          : 'top-tab px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 text-slate-600 hover:text-slate-900 transition';
+      });
+
+      // Highlight Mobile Bottom Tabs
+      document.querySelectorAll('.mobile-tab').forEach(btn => {
+        const active = btn.dataset.tab === tab;
+        btn.className = active
+          ? 'mobile-tab flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-bold text-brand-700 bg-brand-50'
+          : 'mobile-tab flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-semibold text-slate-500';
+      });
+
+      const workspace = document.getElementById('main-workspace');
+      if (tab === 'dietchart') renderDietChartBuilder(workspace);
+      else if (tab === 'bodymass') renderBodyMassCheck(workspace);
+      else if (tab === 'knowledge') renderKnowledgeHub(workspace);
+      else if (tab === 'calculators') renderCalculatorsView(workspace);
+      else if (tab === 'foods') renderFoodsView(workspace);
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // TAB 1: FULL VISUAL DIET CHART BUILDER
+    // =========================================================================
+    function getDietChartTotals() {
+      let kcal = 0, carbs = 0, protein = 0, fat = 0;
+      Object.values(state.dietChart).forEach(items => {
+        (items || []).forEach(item => {
+          kcal += Number(item.kcal) || 0;
+          carbs += Number(item.carbs) || 0;
+          protein += Number(item.protein) || 0;
+          fat += Number(item.fat) || 0;
+        });
+      });
+      return {
+        kcal: Math.round(kcal),
+        carbs: Math.round(carbs * 10) / 10,
+        protein: Math.round(protein * 10) / 10,
+        fat: Math.round(fat * 10) / 10
+      };
+    }
+
+    function renderDietChartBuilder(container) {
+      const a = state.athlete;
+      const totals = getDietChartTotals();
+      const wt = a.weightKg || 64;
+
+      const pctKcal = Math.min(100, Math.round((totals.kcal / (a.targetKcal || 1)) * 100));
+      const pctCarbs = Math.min(100, Math.round((totals.carbs / (a.targetCarbsG || 1)) * 100));
+      const pctPro = Math.min(100, Math.round((totals.protein / (a.targetProteinG || 1)) * 100));
+      const pctFat = Math.min(100, Math.round((totals.fat / (a.targetFatG || 1)) * 100));
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <!-- Page Header & Quick Actions -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
+            <div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Athlete Diet Chart Builder</h1>
+              <p class="text-sm text-slate-500">Build periodized daily meal plans with instant macro tracking, Nepali/sports foods, and printable PDF handouts.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <select onchange="applyDietTemplate(this.value); this.value='';" class="px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-brand-600">
+                <option value="">Load Starter Diet Template...</option>
+                <option value="endurance">Endurance High-Volume Day (7 g/kg CHO)</option>
+                <option value="adolescent">Adolescent Football / Cricket Growth Day</option>
+                <option value="strength">Strength & Hypertrophy Day (2.0 g/kg Pro)</option>
+                <option value="weightcut">Weight-Class Clean Cut Day</option>
+              </select>
+              <button onclick="copyDietChartWhatsApp()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-700 transition">
+                <i data-lucide="copy" class="w-4 h-4 text-brand-600"></i> Copy Text
+              </button>
+              <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold shadow-xs transition">
+                <i data-lucide="printer" class="w-4 h-4"></i> Print / Save PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- Athlete Header & Editable Target Macros Card -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-5 no-print">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Athlete Name</label>
+                <input type="text" value="${escapeAttr(a.name)}" oninput="updateAthleteField('name', this.value)" class="w-full px-3 py-2 text-sm font-semibold bg-slate-50 border border-slate-200 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Age Stage</label>
+                <select onchange="updateAthleteField('ageGroup', this.value)" class="w-full px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl">
+                  ${AGE_GROUPS.filter(g => g !== 'All Ages').map(g => `<option value="${g}" ${a.ageGroup === g ? 'selected' : ''}>${g}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Sport Category</label>
+                <select onchange="updateAthleteField('sportCategory', this.value)" class="w-full px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl">
+                  ${SPORT_CATEGORIES.filter(s => s !== 'All Sports').map(s => `<option value="${s}" ${a.sportCategory === s ? 'selected' : ''}>${s}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Body Weight (kg)</label>
+                <input type="number" step="0.1" value="${a.weightKg}" oninput="updateAthleteField('weightKg', parseFloat(this.value) || 60)" class="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Training Phase</label>
+                <input type="text" value="${escapeAttr(a.phase)}" oninput="updateAthleteField('phase', this.value)" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl" />
+              </div>
+            </div>
+
+            <!-- Live Planned vs Target Macro Progress Bars -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-slate-100">
+              <!-- Calories -->
+              <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80">
+                <div class="flex items-center justify-between text-xs font-bold mb-1">
+                  <span class="text-slate-600">Total Energy</span>
+                  <div class="flex items-center gap-1">
+                    <span class="text-slate-900">${totals.kcal} /</span>
+                    <input type="number" value="${a.targetKcal}" onchange="updateAthleteField('targetKcal', parseInt(this.value)||2500); renderDietChartBuilder(document.getElementById('main-workspace')); lucide.createIcons();" class="w-16 px-1.5 py-0.5 text-right bg-white border border-slate-300 rounded text-xs font-bold" />
+                    <span>kcal</span>
+                  </div>
+                </div>
+                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full bg-brand-600 rounded-full transition-all" style="width: ${pctKcal}%"></div>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1">${(totals.kcal / wt).toFixed(1)} kcal/kg planned</div>
+              </div>
+
+              <!-- Carbs -->
+              <div class="bg-amber-50/60 rounded-xl p-3.5 border border-amber-200/70">
+                <div class="flex items-center justify-between text-xs font-bold mb-1">
+                  <span class="text-amber-900">Carbohydrates</span>
+                  <div class="flex items-center gap-1">
+                    <span class="text-amber-950">${totals.carbs} /</span>
+                    <input type="number" value="${a.targetCarbsG}" onchange="updateAthleteField('targetCarbsG', parseInt(this.value)||300); renderDietChartBuilder(document.getElementById('main-workspace')); lucide.createIcons();" class="w-14 px-1.5 py-0.5 text-right bg-white border border-amber-300 rounded text-xs font-bold" />
+                    <span>g</span>
+                  </div>
+                </div>
+                <div class="w-full h-2 bg-amber-200/70 rounded-full overflow-hidden">
+                  <div class="h-full bg-amber-500 rounded-full transition-all" style="width: ${pctCarbs}%"></div>
+                </div>
+                <div class="text-[11px] text-amber-800 font-semibold mt-1">${(totals.carbs / wt).toFixed(1)} g/kg (Target: ${(a.targetCarbsG / wt).toFixed(1)} g/kg)</div>
+              </div>
+
+              <!-- Protein -->
+              <div class="bg-sky-50/60 rounded-xl p-3.5 border border-sky-200/70">
+                <div class="flex items-center justify-between text-xs font-bold mb-1">
+                  <span class="text-sky-900">Protein</span>
+                  <div class="flex items-center gap-1">
+                    <span class="text-sky-950">${totals.protein} /</span>
+                    <input type="number" value="${a.targetProteinG}" onchange="updateAthleteField('targetProteinG', parseInt(this.value)||120); renderDietChartBuilder(document.getElementById('main-workspace')); lucide.createIcons();" class="w-14 px-1.5 py-0.5 text-right bg-white border border-sky-300 rounded text-xs font-bold" />
+                    <span>g</span>
+                  </div>
+                </div>
+                <div class="w-full h-2 bg-sky-200/70 rounded-full overflow-hidden">
+                  <div class="h-full bg-sky-600 rounded-full transition-all" style="width: ${pctPro}%"></div>
+                </div>
+                <div class="text-[11px] text-sky-800 font-semibold mt-1">${(totals.protein / wt).toFixed(2)} g/kg (Target: ${(a.targetProteinG / wt).toFixed(2)} g/kg)</div>
+              </div>
+
+              <!-- Fat -->
+              <div class="bg-emerald-50/60 rounded-xl p-3.5 border border-emerald-200/70">
+                <div class="flex items-center justify-between text-xs font-bold mb-1">
+                  <span class="text-emerald-900">Healthy Fats</span>
+                  <div class="flex items-center gap-1">
+                    <span class="text-emerald-950">${totals.fat} /</span>
+                    <input type="number" value="${a.targetFatG}" onchange="updateAthleteField('targetFatG', parseInt(this.value)||65); renderDietChartBuilder(document.getElementById('main-workspace')); lucide.createIcons();" class="w-14 px-1.5 py-0.5 text-right bg-white border border-emerald-300 rounded text-xs font-bold" />
+                    <span>g</span>
+                  </div>
+                </div>
+                <div class="w-full h-2 bg-emerald-200/70 rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-600 rounded-full transition-all" style="width: ${pctFat}%"></div>
+                </div>
+                <div class="text-[11px] text-emerald-800 font-semibold mt-1">${(totals.fat / wt).toFixed(1)} g/kg planned</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Printable / Interactive Full-Day Diet Chart Sheet -->
+          <div id="printable-diet-chart" class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+            <!-- Printable Clinic Banner -->
+            <div class="p-6 border-b border-slate-200 bg-gradient-to-r from-brand-50/70 to-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <input type="text" value="${escapeAttr(a.clinicHeader)}" oninput="updateAthleteField('clinicHeader', this.value)" class="text-xs font-extrabold uppercase tracking-wider text-brand-700 bg-transparent border-b border-transparent hover:border-brand-300 focus:outline-none w-full" />
+                <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">Personalized Sports Nutrition Diet Chart</h2>
+                <p class="text-xs text-slate-600 mt-1">
+                  <strong>Athlete:</strong> ${escapeHtml(a.name)} (${a.age} yrs, ${a.sex === 'male' ? 'M' : 'F'}) •
+                  <strong>Sport:</strong> ${escapeHtml(a.sportCategory)} (${escapeHtml(a.phase)})
+                </p>
+              </div>
+              <div class="text-xs text-slate-600 sm:text-right bg-white px-4 py-2.5 rounded-xl border border-slate-200">
+                <div><strong>Weight:</strong> ${a.weightKg} kg | <strong>Body Fat:</strong> ${a.bodyFatPct}% | <strong>FFM:</strong> ${(a.weightKg * (1 - a.bodyFatPct / 100)).toFixed(1)} kg</div>
+                <div class="font-bold text-brand-800 mt-0.5">Daily Plan: ${totals.kcal} kcal • ${totals.carbs}g CHO • ${totals.protein}g Pro • ${totals.fat}g Fat</div>
+              </div>
+            </div>
+
+            <!-- Meal Slots List -->
+            <div class="divide-y divide-slate-200">
+              ${MEAL_SLOTS.map(slot => {
+                const items = state.dietChart[slot.id] || [];
+                const slotKcal = Math.round(items.reduce((s, i) => s + (Number(i.kcal) || 0), 0));
+                const slotCho = items.reduce((s, i) => s + (Number(i.carbs) || 0), 0).toFixed(1);
+                const slotPro = items.reduce((s, i) => s + (Number(i.protein) || 0), 0).toFixed(1);
+
+                return `
+                  <div class="p-5 hover:bg-slate-50/40 transition">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                      <div class="flex flex-wrap items-center gap-2.5">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-xs font-bold">${slot.time}</span>
+                        <h3 class="text-base font-extrabold text-slate-900">${slot.label}</h3>
+                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-800 border border-brand-200/70">${slot.windowTag}</span>
+                      </div>
+                      <div class="flex items-center gap-3">
+                        <span class="text-xs font-bold text-slate-500">${slotKcal} kcal • ${slotCho}g CHO • ${slotPro}g Pro</span>
+                        <button onclick="openMealItemModal('${slot.id}')" class="no-print inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-2xs transition">
+                          <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Food
+                        </button>
+                      </div>
+                    </div>
+
+                    ${items.length === 0 ? `
+                      <div class="text-xs text-slate-400 italic py-2 px-3 rounded-xl border border-dashed border-slate-200">
+                        No foods added to ${slot.label} yet. Click "+ Add Food" to pick from Sports/Nepali DB or enter custom meal.
+                      </div>
+                    ` : `
+                      <div class="space-y-2">
+                        ${items.map((item, idx) => `
+                          <div class="flex items-center justify-between gap-3 bg-slate-50/90 border border-slate-200/80 rounded-xl px-3.5 py-2.5 text-sm">
+                            <div class="min-w-0">
+                              <span class="font-bold text-slate-900">${escapeHtml(item.name)}</span>
+                              <span class="text-xs font-semibold text-brand-700 ml-2">(${escapeHtml(item.serving)})</span>
+                            </div>
+                            <div class="flex items-center gap-3 shrink-0 text-xs">
+                              <span class="font-bold text-slate-700">${Math.round(item.kcal)} kcal</span>
+                              <span class="hidden sm:inline font-semibold text-amber-700">${item.carbs}g C</span>
+                              <span class="hidden sm:inline font-semibold text-sky-700">${item.protein}g P</span>
+                              <span class="hidden sm:inline font-semibold text-emerald-700">${item.fat}g F</span>
+                              <button onclick="removeMealItem('${slot.id}', ${idx})" class="no-print p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Remove item">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                              </button>
+                            </div>
+                          </div>
+                        `).join('')}
+                      </div>
+                    `}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Hydration & Supplement Notes Footer -->
+            <div class="p-6 bg-slate-50 border-t border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Hydration, Electrolyte & Supplement Notes</label>
+                <button onclick="clearEntireDietChart()" class="no-print text-xs font-semibold text-rose-600 hover:underline">Clear All Meals</button>
+              </div>
+              <textarea rows="2" oninput="updateAthleteField('coachNotes', this.value)" class="w-full px-3.5 py-2 text-sm bg-white border border-slate-200 rounded-xl text-slate-700">${escapeHtml(a.coachNotes || '')}</textarea>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateAthleteField(field, value) {
+      state.athlete[field] = value;
+      saveAll();
+    }
+
+    function openMealItemModal(slotId) {
+      const slot = MEAL_SLOTS.find(s => s.id === slotId);
+      document.getElementById('meal-modal-slot-id').value = slotId;
+      document.getElementById('meal-modal-slot-label').textContent = `Adding to: ${slot ? slot.label : slotId} (${slot ? slot.time : ''})`;
+      document.getElementById('meal-food-search').value = '';
+      setMealPortion(100);
+      document.getElementById('meal-item-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeMealItemModal() {
+      document.getElementById('meal-item-modal').classList.add('hidden');
+    }
+
+    function setMealPortion(grams) {
+      state.selectedPortionGrams = grams;
+      document.getElementById('meal-portion-grams').value = grams;
+      document.querySelectorAll('.portion-btn').forEach(btn => {
+        const val = parseInt(btn.textContent);
+        btn.className = val === grams
+          ? 'portion-btn px-3 py-1 rounded-lg text-xs font-bold border border-brand-600 bg-brand-600 text-white'
+          : 'portion-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white hover:bg-brand-50';
+      });
+      renderMealModalFoodList();
+    }
+
+    function renderMealModalFoodList() {
+      const q = (document.getElementById('meal-food-search')?.value || '').trim().toLowerCase();
+      const grams = parseFloat(document.getElementById('meal-portion-grams')?.value) || 100;
+      const mult = grams / 100;
+
+      const filtered = state.foods.filter(f => !q || f.name.toLowerCase().includes(q) || f.category.toLowerCase().includes(q));
+      const container = document.getElementById('meal-modal-food-list');
+
+      container.innerHTML = filtered.map(f => {
+        const kcal = Math.round(f.kcal * mult);
+        const carbs = (f.carbs * mult).toFixed(1);
+        const protein = (f.protein * mult).toFixed(1);
+        const fat = (f.fat * mult).toFixed(1);
+
+        return `
+          <button type="button" onclick="addDbFoodToSlot('${f.id}')" class="text-left p-3 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 transition flex flex-col justify-between">
+            <div class="font-bold text-slate-900 text-xs">${escapeHtml(f.name)}</div>
+            <div class="text-[11px] font-semibold text-brand-700 mt-1">
+              ${grams}g → ${kcal} kcal • ${carbs}g C • ${protein}g P • ${fat}g F
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function addDbFoodToSlot(foodId) {
+      const slotId = document.getElementById('meal-modal-slot-id').value;
+      const grams = parseFloat(document.getElementById('meal-portion-grams')?.value) || 100;
+      const food = state.foods.find(f => f.id === foodId);
+      if (!food || !slotId) return;
+
+      const mult = grams / 100;
+      if (!state.dietChart[slotId]) state.dietChart[slotId] = [];
+      state.dietChart[slotId].push({
+        id: `item-${Date.now()}`,
+        name: food.name,
+        serving: `${grams}g`,
+        kcal: Math.round(food.kcal * mult),
+        carbs: Math.round(food.carbs * mult * 10) / 10,
+        protein: Math.round(food.protein * mult * 10) / 10,
+        fat: Math.round(food.fat * mult * 10) / 10
+      });
+
+      saveAll();
+      closeMealItemModal();
+      renderDietChartBuilder(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast(`Added ${grams}g ${food.name}`);
+    }
+
+    function handleCustomMealItemSubmit(event) {
+      event.preventDefault();
+      const fd = new FormData(event.target);
+      const slotId = document.getElementById('meal-modal-slot-id').value;
+      if (!state.dietChart[slotId]) state.dietChart[slotId] = [];
+
+      state.dietChart[slotId].push({
+        id: `custom-${Date.now()}`,
+        name: fd.get('customName').trim(),
+        serving: (fd.get('customServing') || '1 serving').trim(),
+        kcal: parseFloat(fd.get('kcal')) || 0,
+        carbs: parseFloat(fd.get('carbs')) || 0,
+        protein: parseFloat(fd.get('protein')) || 0,
+        fat: parseFloat(fd.get('fat')) || 0
+      });
+
+      saveAll();
+      event.target.reset();
+      closeMealItemModal();
+      renderDietChartBuilder(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast('Custom item added to meal slot');
+    }
+
+    function removeMealItem(slotId, idx) {
+      if (!state.dietChart[slotId]) return;
+      state.dietChart[slotId].splice(idx, 1);
+      saveAll();
+      renderDietChartBuilder(document.getElementById('main-workspace'));
+      lucide.createIcons();
+    }
+
+    function clearEntireDietChart() {
+      MEAL_SLOTS.forEach(s => { state.dietChart[s.id] = []; });
+      saveAll();
+      renderDietChartBuilder(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast('Diet chart cleared');
+    }
+
+    function applyDietTemplate(tpl) {
+      if (!tpl) return;
+      const wt = state.athlete.weightKg || 64;
+      if (tpl === 'endurance') {
+        state.athlete.targetKcal = Math.round(wt * 45);
+        state.athlete.targetCarbsG = Math.round(wt * 7.5);
+        state.athlete.targetProteinG = Math.round(wt * 1.7);
+        state.athlete.targetFatG = Math.round(wt * 1.0);
+        state.dietChart = JSON.parse(JSON.stringify(DEFAULT_DIET_CHART));
+      } else if (tpl === 'adolescent') {
+        state.athlete.targetKcal = Math.round(wt * 46);
+        state.athlete.targetCarbsG = Math.round(wt * 6.5);
+        state.athlete.targetProteinG = Math.round(wt * 1.6);
+        state.athlete.targetFatG = Math.round(wt * 1.2);
+        state.dietChart = {
+          early: [{ id: 't1', name: 'Ripe Banana', serving: '100g', kcal: 89, carbs: 22.8, protein: 1.1, fat: 0.3 }],
+          breakfast: [
+            { id: 't2', name: 'Finger Millet (Kodo / Ragi) Porridge / Roti', serving: '100g', kcal: 328, carbs: 72.0, protein: 7.3, fat: 1.3 },
+            { id: 't3', name: 'Whole Boiled / Poached Eggs', serving: '100g (2 eggs)', kcal: 155, carbs: 1.1, protein: 13.0, fat: 11.0 }
+          ],
+          pre: [{ id: 't4', name: 'Beaten Rice (Chiura) + Curd', serving: '100g chiura', kcal: 346, carbs: 77.3, protein: 6.6, fat: 1.2 }],
+          intra: [{ id: 't5', name: 'Water + Lemon + Pinch of Salt (4-Gulp Rule)', serving: '750 mL', kcal: 20, carbs: 5.0, protein: 0, fat: 0 }],
+          post: [{ id: 't6', name: 'Roasted Gram Flour (Sattu) + Banana Shake', serving: '60g sattu', kcal: 229, carbs: 38.1, protein: 12.4, fat: 3.3 }],
+          lunch: [
+            { id: 't7', name: 'Cooked White Basmati Rice', serving: '220g', kcal: 286, carbs: 62.0, protein: 5.9, fat: 0.7 },
+            { id: 't8', name: 'Cooked Masoor / Moong Dal (Thick)', serving: '150g', kcal: 174, carbs: 30.2, protein: 13.5, fat: 0.6 },
+            { id: 't9', name: 'Fresh Paneer (Cottage Cheese)', serving: '80g', kcal: 212, carbs: 1.0, protein: 14.6, fat: 16.6 }
+          ],
+          snack: [{ id: 't10', name: 'Natural Peanut Butter on Toast', serving: '30g PB', kcal: 176, carbs: 6.0, protein: 7.5, fat: 15.0 }],
+          dinner: [
+            { id: 't11', name: 'Cooked White Basmati Rice', serving: '180g', kcal: 234, carbs: 50.8, protein: 4.9, fat: 0.5 },
+            { id: 't12', name: 'Grilled Chicken Breast (Skinless)', serving: '100g', kcal: 165, carbs: 0.0, protein: 31.0, fat: 3.6 }
+          ]
+        };
+      } else if (tpl === 'strength') {
+        state.athlete.targetKcal = Math.round(wt * 40);
+        state.athlete.targetCarbsG = Math.round(wt * 5.0);
+        state.athlete.targetProteinG = Math.round(wt * 2.0);
+        state.athlete.targetFatG = Math.round(wt * 1.0);
+        state.dietChart = {
+          early: [{ id: 's1', name: 'Ripe Banana', serving: '100g', kcal: 89, carbs: 22.8, protein: 1.1, fat: 0.3 }],
+          breakfast: [
+            { id: 's2', name: 'Rolled Oats (Dry)', serving: '80g', kcal: 303, carbs: 54.2, protein: 10.6, fat: 5.2 },
+            { id: 's3', name: 'Whole Boiled / Poached Eggs', serving: '150g (3 eggs)', kcal: 233, carbs: 1.7, protein: 19.5, fat: 16.5 }
+          ],
+          pre: [{ id: 's4', name: 'Beaten Rice (Chiura)', serving: '70g', kcal: 242, carbs: 54.1, protein: 4.6, fat: 0.8 }],
+          intra: [{ id: 's5', name: 'Electrolyte Water', serving: '750 mL', kcal: 0, carbs: 0, protein: 0, fat: 0 }],
+          post: [
+            { id: 's6', name: 'Batch-Tested Whey Protein Isolate', serving: '35g (1 scoop)', kcal: 130, carbs: 0.7, protein: 30.1, fat: 0.5 },
+            { id: 's7', name: 'Medjool Dates', serving: '40g', kcal: 111, carbs: 30.0, protein: 0.7, fat: 0.1 }
+          ],
+          lunch: [
+            { id: 's8', name: 'Cooked White Basmati Rice', serving: '220g', kcal: 286, carbs: 62.0, protein: 5.9, fat: 0.7 },
+            { id: 's9', name: 'Grilled Chicken Breast (Skinless)', serving: '150g', kcal: 248, carbs: 0.0, protein: 46.5, fat: 5.4 }
+          ],
+          snack: [{ id: 's10', name: 'Roasted Gram Flour (Sattu)', serving: '50g', kcal: 191, carbs: 31.8, protein: 10.3, fat: 2.8 }],
+          dinner: [
+            { id: 's11', name: 'Buckwheat Flour (Phapar) Roti', serving: '80g', kcal: 268, carbs: 56.5, protein: 10.1, fat: 2.5 },
+            { id: 's12', name: 'Fresh Paneer (Cottage Cheese)', serving: '100g', kcal: 265, carbs: 1.2, protein: 18.3, fat: 20.8 }
+          ]
+        };
+      } else if (tpl === 'weightcut') {
+        state.athlete.targetKcal = Math.round(wt * 31);
+        state.athlete.targetCarbsG = Math.round(wt * 3.5);
+        state.athlete.targetProteinG = Math.round(wt * 2.1);
+        state.athlete.targetFatG = Math.round(wt * 0.8);
+        state.dietChart = {
+          early: [{ id: 'w1', name: 'Black Coffee / Green Tea + 500 mL Water', serving: '1 cup', kcal: 5, carbs: 0, protein: 0, fat: 0 }],
+          breakfast: [{ id: 'w2', name: 'Whole Boiled / Poached Eggs', serving: '150g (3 eggs)', kcal: 233, carbs: 1.7, protein: 19.5, fat: 16.5 }],
+          pre: [{ id: 'w3', name: 'Ripe Banana', serving: '100g', kcal: 89, carbs: 22.8, protein: 1.1, fat: 0.3 }],
+          intra: [{ id: 'w4', name: 'Zero-Sugar Electrolyte Water', serving: '750 mL', kcal: 0, carbs: 0, protein: 0, fat: 0 }],
+          post: [{ id: 'w5', name: 'Batch-Tested Whey Protein Isolate', serving: '35g', kcal: 130, carbs: 0.7, protein: 30.1, fat: 0.5 }],
+          lunch: [
+            { id: 'w6', name: 'Cooked White Basmati Rice', serving: '180g', kcal: 234, carbs: 50.8, protein: 4.9, fat: 0.5 },
+            { id: 'w7', name: 'Grilled Chicken Breast (Skinless)', serving: '150g', kcal: 248, carbs: 0.0, protein: 46.5, fat: 5.4 }
+          ],
+          snack: [{ id: 'w8', name: 'Greek Yogurt / Thick Curd (Dahi)', serving: '150g', kcal: 146, carbs: 5.4, protein: 13.5, fat: 7.5 }],
+          dinner: [
+            { id: 'w9', name: 'Cooked Masoor / Moong Dal (Thick)', serving: '150g', kcal: 174, carbs: 30.2, protein: 13.5, fat: 0.6 },
+            { id: 'w10', name: 'Grilled Chicken Breast (Skinless)', serving: '120g', kcal: 198, carbs: 0.0, protein: 37.2, fat: 4.3 }
+          ]
+        };
+      }
+
+      saveAll();
+      renderDietChartBuilder(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast('Starter diet chart loaded');
+    }
+
+    function copyDietChartWhatsApp() {
+      const a = state.athlete;
+      const totals = getDietChartTotals();
+      const lines = [
+        `*ATHLETE DIET CHART — ${a.name.toUpperCase()}*`,
+        `Sport: ${a.sportCategory} | Weight: ${a.weightKg} kg | Phase: ${a.phase}`,
+        `Daily Totals: ${totals.kcal} kcal | Carbs: ${totals.carbs}g | Protein: ${totals.protein}g | Fat: ${totals.fat}g`,
+        ``
+      ];
+
+      MEAL_SLOTS.forEach(slot => {
+        const items = state.dietChart[slot.id] || [];
+        if (items.length) {
+          lines.push(`*${slot.time} — ${slot.label}*`);
+          items.forEach(i => lines.push(`  • ${i.name} (${i.serving}) — ${Math.round(i.kcal)} kcal`));
+        }
+      });
+
+      if (a.coachNotes) lines.push(`\n*Notes:* ${a.coachNotes}`);
+      copyText(lines.join('\n'), 'Diet chart copied for WhatsApp / Email');
+    }
+
+    // =========================================================================
+    // TAB 2: ATHLETE BODY MASS & COMPOSITION CHECK MODULE
+    // =========================================================================
+    function renderBodyMassCheck(container) {
+      const a = state.athlete;
+      const heightM = (a.heightCm || 174) / 100;
+      const bmi = a.weightKg / (heightM * heightM);
+      const fatMassKg = a.weightKg * (a.bodyFatPct / 100);
+      const ffmKg = a.weightKg - fatMassKg;
+      const ffmi = ffmKg / (heightM * heightM);
+
+      // Essential Fat & RED-S Low Body Fat Warning
+      const minSafeBf = a.sex === 'male' ? 5.0 : 12.0;
+      const isLowBfRisk = a.bodyFatPct < minSafeBf;
+
+      // Athletic Mass vs BMI Interpretation
+      let bmiNote = 'Standard BMI range';
+      if (bmi >= 25 && a.bodyFatPct < (a.sex === 'male' ? 18 : 25)) {
+        bmiNote = 'High BMI driven by Lean Muscle Mass (FFMI) — NOT excess adiposity';
+      } else if (bmi < 18.5) {
+        bmiNote = 'Low Body Mass — Screen for Low Energy Availability (RED-S)';
+      }
+
+      // Target Competition Weight at Ideal Sport Body Fat (e.g. 10% M / 17% F)
+      const idealCompBf = a.sex === 'male' ? 0.10 : 0.17;
+      const estCompWeight = (ffmKg / (1 - idealCompBf)).toFixed(1);
+      const safeWeeklyLossKg = (a.weightKg * 0.0075).toFixed(2); // 0.75% BW/week
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Athlete Body Mass & Composition Check</h1>
+              <p class="text-sm text-slate-500">Assess Fat-Free Mass (FFM), FFMI, skinfold body fat %, RED-S low-fat thresholds, and longitudinal progress.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <button onclick="recordBodyMassCheckIn()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition">
+                <i data-lucide="save" class="w-4 h-4"></i> Save Check-In to History
+              </button>
+              <button onclick="sendBodyMassTargetsToDietChart()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold shadow-xs transition">
+                <i data-lucide="arrow-right-circle" class="w-4 h-4"></i> Send Targets to Diet Chart
+              </button>
+            </div>
+          </div>
+
+          ${isLowBfRisk ? `
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start gap-3 text-rose-950">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600 shrink-0 mt-0.5"></i>
+              <div class="text-xs sm:text-sm">
+                <strong>RED-S / Essential Fat Warning:</strong> Body fat (${a.bodyFatPct}%) is below the minimum physiological threshold (${minSafeBf}% for ${a.sex === 'male' ? 'males' : 'females'}). Avoid further energy restriction and screen for endocrine/bone RED-S markers.
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Top 2-Column Layout: Left Inputs / Right Live Anthropometric Breakdown -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Column: Anthropometric Measurements -->
+            <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 space-y-5 shadow-2xs">
+              <div class="flex items-center justify-between">
+                <h2 class="text-base font-extrabold text-slate-900">1. Anthropometric Measurements</h2>
+                <div class="inline-flex rounded-xl bg-slate-100 p-1 text-xs font-bold">
+                  <button type="button" onclick="updateAthleteField('sex', 'male'); renderBodyMassCheck(document.getElementById('main-workspace')); lucide.createIcons();" class="px-3 py-1 rounded-lg ${a.sex === 'male' ? 'bg-brand-600 text-white' : 'text-slate-600'}">Male</button>
+                  <button type="button" onclick="updateAthleteField('sex', 'female'); renderBodyMassCheck(document.getElementById('main-workspace')); lucide.createIcons();" class="px-3 py-1 rounded-lg ${a.sex === 'female' ? 'bg-brand-600 text-white' : 'text-slate-600'}">Female</button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Athlete Name</label>
+                  <input type="text" value="${escapeAttr(a.name)}" oninput="updateAthleteField('name', this.value)" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Age (Years)</label>
+                  <input type="number" min="8" max="90" value="${a.age}" oninput="handleAgeNumberChange(this.value)" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Height (cm)</label>
+                  <input type="number" step="0.5" value="${a.heightCm}" oninput="updateAthleteField('heightCm', parseFloat(this.value)||170); renderBodyMassCheck(document.getElementById('main-workspace')); lucide.createIcons();" class="w-full px-3 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Body Mass (kg)</label>
+                  <input type="number" step="0.1" value="${a.weightKg}" oninput="updateAthleteField('weightKg', parseFloat(this.value)||60); renderBodyMassCheck(document.getElementById('main-workspace')); lucide.createIcons();" class="w-full px-3 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-brand-800 mb-1">Body Fat (%)</label>
+                  <input type="number" step="0.1" value="${a.bodyFatPct}" oninput="updateAthleteField('bodyFatPct', parseFloat(this.value)||12); renderBodyMassCheck(document.getElementById('main-workspace')); lucide.createIcons();" class="w-full px-3 py-2.5 text-sm font-extrabold bg-brand-50/70 border border-brand-300 rounded-xl text-brand-900" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Waist Circumference (cm)</label>
+                  <input type="number" step="0.5" value="${a.waistCm || 74}" oninput="updateAthleteField('waistCm', parseFloat(this.value)||74)" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Mid-Upper Arm MUAC (cm)</label>
+                  <input type="number" step="0.1" value="${a.muacCm || 29.5}" oninput="updateAthleteField('muacCm', parseFloat(this.value)||29)" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+              </div>
+
+              <!-- Quick 3-Site Skinfold Estimator (Jackson-Pollock) -->
+              <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Optional: Jackson-Pollock 3-Site Skinfold (mm)</span>
+                  <button type="button" onclick="applySkinfoldEstimate()" class="px-2.5 py-1 rounded-lg bg-brand-600 text-white text-[11px] font-bold hover:bg-brand-700">
+                    Apply BF%
+                  </button>
+                </div>
+                <div class="grid grid-cols-3 gap-2.5 text-xs">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">${a.sex === 'male' ? 'Chest (mm)' : 'Triceps (mm)'}</label>
+                    <input id="sf-site1" type="number" value="10" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">${a.sex === 'male' ? 'Abdomen (mm)' : 'Suprailiac (mm)'}</label>
+                    <input id="sf-site2" type="number" value="16" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Thigh (mm)</label>
+                    <input id="sf-site3" type="number" value="14" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Body Composition & Performance Indices -->
+            <div class="lg:col-span-6 space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs">
+                  <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Fat-Free Mass (Lean Mass)</div>
+                  <div class="text-3xl font-extrabold text-brand-700 mt-1">${ffmKg.toFixed(1)} kg</div>
+                  <div class="text-xs text-slate-500 mt-1">${(100 - a.bodyFatPct).toFixed(1)}% of total body mass (Used for EA / RED-S)</div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs">
+                  <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Adipose Fat Mass</div>
+                  <div class="text-3xl font-extrabold text-slate-900 mt-1">${fatMassKg.toFixed(1)} kg</div>
+                  <div class="text-xs text-slate-500 mt-1">Body Fat: ${a.bodyFatPct}% (Min safe: ${minSafeBf}%)</div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs">
+                  <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Fat-Free Mass Index (FFMI)</div>
+                  <div class="text-3xl font-extrabold text-indigo-700 mt-1">${ffmi.toFixed(1)} <span class="text-sm font-semibold">kg/m²</span></div>
+                  <div class="text-xs text-slate-500 mt-1">${a.sex === 'male' ? 'Athletic ref: 20–24 kg/m²' : 'Athletic ref: 16–19 kg/m²'}</div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs">
+                  <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Standard BMI (Context Only)</div>
+                  <div class="text-3xl font-extrabold text-slate-800 mt-1">${bmi.toFixed(1)}</div>
+                  <div class="text-xs font-semibold text-brand-700 mt-1">${bmiNote}</div>
+                </div>
+              </div>
+
+              <!-- Weight-Class / Periodization Guidance Box -->
+              <div class="bg-brand-50 border border-brand-200 rounded-2xl p-5 space-y-2">
+                <h3 class="text-sm font-extrabold text-brand-950">Periodized Body Mass & Composition Guidance</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-brand-900 pt-1">
+                  <div class="bg-white/90 p-3 rounded-xl border border-brand-200/70">
+                    <div class="font-bold text-slate-500 uppercase text-[10px]">Est. Competition Mass (at ${a.sex === 'male' ? '10%' : '17%'} BF)</div>
+                    <div class="text-lg font-extrabold text-slate-900 mt-0.5">${estCompWeight} kg</div>
+                  </div>
+                  <div class="bg-white/90 p-3 rounded-xl border border-brand-200/70">
+                    <div class="font-bold text-slate-500 uppercase text-[10px]">Max Safe Weekly Mass Change (0.75%)</div>
+                    <div class="text-lg font-extrabold text-slate-900 mt-0.5">±${safeWeeklyLossKg} kg / week</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Multi-Visit Body Mass & Composition History Table -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <h3 class="text-base font-extrabold text-slate-900">Longitudinal Body Composition Tracking History</h3>
+              <span class="text-xs font-semibold text-slate-400">${state.history.length} check-ins</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-200 text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                    <th class="py-3 px-5">Date</th>
+                    <th class="py-3 px-4">Training Phase</th>
+                    <th class="py-3 px-4 text-right">Weight (kg)</th>
+                    <th class="py-3 px-4 text-right">Body Fat %</th>
+                    <th class="py-3 px-4 text-right">Lean Mass (FFM)</th>
+                    <th class="py-3 px-4 text-right">Fat Mass</th>
+                    <th class="py-3 px-4 text-right">FFMI</th>
+                    <th class="py-3 px-5 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${state.history.map((h, i) => `
+                    <tr class="hover:bg-slate-50">
+                      <td class="py-3 px-5 font-semibold text-slate-800">${escapeHtml(h.date)}</td>
+                      <td class="py-3 px-4 text-xs font-semibold text-brand-800">${escapeHtml(h.phase)}</td>
+                      <td class="py-3 px-4 text-right font-bold text-slate-900">${h.weightKg} kg</td>
+                      <td class="py-3 px-4 text-right font-semibold text-amber-700">${h.bodyFatPct}%</td>
+                      <td class="py-3 px-4 text-right font-bold text-brand-700">${h.ffmKg} kg</td>
+                      <td class="py-3 px-4 text-right text-slate-600">${h.fatMassKg} kg</td>
+                      <td class="py-3 px-4 text-right font-semibold text-indigo-700">${h.ffmi}</td>
+                      <td class="py-3 px-5 text-right">
+                        <button onclick="deleteHistoryRow(${i})" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleAgeNumberChange(val) {
+      const age = parseInt(val) || 20;
+      state.athlete.age = age;
+      if (age <= 12) state.athlete.ageGroup = 'Youth / Child (8–12 yrs)';
+      else if (age <= 17) state.athlete.ageGroup = 'Adolescent / Junior (13–17 yrs)';
+      else if (age <= 24) state.athlete.ageGroup = 'Collegiate / Young Adult (18–24 yrs)';
+      else if (age <= 34) state.athlete.ageGroup = 'Senior Elite / Adult (25–34 yrs)';
+      else state.athlete.ageGroup = 'Masters Athlete (35+ yrs)';
+      saveAll();
+    }
+
+    function applySkinfoldEstimate() {
+      const s1 = parseFloat(document.getElementById('sf-site1')?.value) || 10;
+      const s2 = parseFloat(document.getElementById('sf-site2')?.value) || 16;
+      const s3 = parseFloat(document.getElementById('sf-site3')?.value) || 14;
+      const sum = s1 + s2 + s3;
+      const age = state.athlete.age || 22;
+
+      let bd = 1.07;
+      if (state.athlete.sex === 'male') {
+        bd = 1.10938 - (0.0008267 * sum) + (0.0000016 * sum * sum) - (0.0002574 * age);
+      } else {
+        bd = 1.0994921 - (0.0009929 * sum) + (0.0000023 * sum * sum) - (0.0001392 * age);
+      }
+      const bfPct = Math.max(4, Math.min(45, ((4.95 / bd) - 4.5) * 100));
+      state.athlete.bodyFatPct = Math.round(bfPct * 10) / 10;
+      saveAll();
+      renderBodyMassCheck(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast(`Body fat updated to ${state.athlete.bodyFatPct}% (Sum: ${sum} mm)`);
+    }
+
+    function recordBodyMassCheckIn() {
+      const a = state.athlete;
+      const heightM = (a.heightCm || 174) / 100;
+      const fatMassKg = Math.round(a.weightKg * (a.bodyFatPct / 100) * 100) / 100;
+      const ffmKg = Math.round((a.weightKg - fatMassKg) * 100) / 100;
+      const ffmi = Math.round((ffmKg / (heightM * heightM)) * 10) / 10;
+
+      state.history.unshift({
+        date: new Date().toISOString().slice(0, 10),
+        weightKg: a.weightKg,
+        bodyFatPct: a.bodyFatPct,
+        ffmKg,
+        fatMassKg,
+        ffmi,
+        phase: a.phase
+      });
+      saveAll();
+      renderBodyMassCheck(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast('Body composition check-in saved to history');
+    }
+
+    function deleteHistoryRow(idx) {
+      state.history.splice(idx, 1);
+      saveAll();
+      renderBodyMassCheck(document.getElementById('main-workspace'));
+      lucide.createIcons();
+    }
+
+    function sendBodyMassTargetsToDietChart() {
+      const a = state.athlete;
+      const wt = a.weightKg || 64;
+      let choGkg = 6.5;
+      let proGkg = 1.7;
+
+      if (a.sportCategory === 'Endurance') { choGkg = 7.5; proGkg = 1.7; }
+      else if (a.sportCategory === 'Strength & Power') { choGkg = 5.0; proGkg = 2.0; }
+      else if (a.sportCategory === 'Combat & Weight-Class') { choGkg = 4.5; proGkg = 2.0; }
+
+      if (a.age >= 35) proGkg = Math.max(proGkg, 1.9);
+
+      a.targetCarbsG = Math.round(wt * choGkg);
+      a.targetProteinG = Math.round(wt * proGkg);
+      a.targetFatG = Math.round(wt * 1.0);
+      a.targetKcal = (a.targetCarbsG * 4) + (a.targetProteinG * 4) + (a.targetFatG * 9);
+
+      saveAll();
+      switchTab('dietchart');
+      showToast(`Targets synced to Diet Chart (${a.targetKcal} kcal)`);
+    }
+
+    // =========================================================================
+    // TAB 3: SPORTS KNOWLEDGE HUB (AGE-WISE & SPORT-CATEGORY FILTERED)
+    // =========================================================================
+    function renderKnowledgeHub(container) {
+      const filtered = state.knowledge.filter(item => {
+        if (state.khTypeFilter !== 'all' && item.type !== state.khTypeFilter) return false;
+        if (state.khAgeFilter !== 'All Ages' && item.ageGroups !== 'All Ages' && item.ageGroups !== state.khAgeFilter) return false;
+        if (state.khSportFilter !== 'All Sports' && item.sportCategories !== 'All Sports' && item.sportCategories !== state.khSportFilter) return false;
+        if (state.khSearch && !JSON.stringify(item).toLowerCase().includes(state.khSearch)) return false;
+        return true;
+      });
+
+      const typeBadgeMap = {
+        protocol: { label: 'Fueling Protocol', cls: 'bg-brand-100 text-brand-900' },
+        study: { label: 'Scientific Study', cls: 'bg-sky-100 text-sky-900' },
+        tip: { label: 'Coaching Cue', cls: 'bg-amber-100 text-amber-900' },
+        supplement: { label: 'AIS Supplement', cls: 'bg-emerald-100 text-emerald-900' }
+      };
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Sports Science & Evidence Knowledge Hub</h1>
+              <p class="text-sm text-slate-500">Filter protocols, PubMed/DOI studies, coaching tips, and AIS supplements by Athlete Age Stage & Sport Category.</p>
+            </div>
+            <button onclick="openKnowledgeModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-xs transition shrink-0">
+              <i data-lucide="plus" class="w-4 h-4"></i> Add Study / Protocol / Tip
+            </button>
+          </div>
+
+          <!-- Clean Filter Panel -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 space-y-3.5 shadow-2xs">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="relative flex-1">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input
+                  type="text"
+                  value="${escapeAttr(state.khSearch)}"
+                  oninput="state.khSearch = this.value.trim().toLowerCase(); renderKnowledgeHub(document.getElementById('main-workspace')); lucide.createIcons();"
+                  placeholder="Search RED-S, creatine, glycogen, youth hydration, collagen..."
+                  class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl"
+                />
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                ${[
+                  { id: 'all', label: 'All Types' },
+                  { id: 'protocol', label: 'Protocols' },
+                  { id: 'study', label: 'Studies' },
+                  { id: 'tip', label: 'Tips' },
+                  { id: 'supplement', label: 'AIS Supplements' }
+                ].map(t => `
+                  <button onclick="state.khTypeFilter='${t.id}'; renderKnowledgeHub(document.getElementById('main-workspace')); lucide.createIcons();" class="px-3 py-2 rounded-xl text-xs font-bold border transition ${state.khTypeFilter === t.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">
+                    ${t.label}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Age Stage Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+              <span class="text-xs font-extrabold text-indigo-700 shrink-0">Age Stage:</span>
+              ${AGE_GROUPS.map(age => `
+                <button onclick="state.khAgeFilter='${age}'; renderKnowledgeHub(document.getElementById('main-workspace')); lucide.createIcons();" class="px-3 py-1 rounded-full text-xs font-semibold border whitespace-nowrap transition ${state.khAgeFilter === age ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-indigo-50'}">
+                  ${age}
+                </button>
+              `).join('')}
+            </div>
+
+            <!-- Sport Category Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+              <span class="text-xs font-extrabold text-brand-800 shrink-0">Sport Type:</span>
+              ${SPORT_CATEGORIES.map(sp => `
+                <button onclick="state.khSportFilter='${sp}'; renderKnowledgeHub(document.getElementById('main-workspace')); lucide.createIcons();" class="px-3 py-1 rounded-full text-xs font-semibold border whitespace-nowrap transition ${state.khSportFilter === sp ? 'bg-brand-600 text-white border-brand-600' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-brand-50'}">
+                  ${sp}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Knowledge Cards Grid -->
+          ${filtered.length === 0 ? `
+            <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center">
+              <p class="text-base font-bold text-slate-700">No matching entries found</p>
+              <button onclick="state.khAgeFilter='All Ages'; state.khSportFilter='All Sports'; state.khTypeFilter='all'; state.khSearch=''; renderKnowledgeHub(document.getElementById('main-workspace')); lucide.createIcons();" class="mt-3 px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-bold">
+                Reset All Filters
+              </button>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              ${filtered.map(item => {
+                const badge = typeBadgeMap[item.type] || typeBadgeMap.protocol;
+                return `
+                  <article class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs flex flex-col justify-between space-y-4">
+                    <div class="space-y-2.5">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold ${badge.cls}">${badge.label}</span>
+                        <div class="flex flex-wrap gap-1.5">
+                          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-800 border border-indigo-200">${escapeHtml(item.ageGroups)}</span>
+                          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-brand-50 text-brand-800 border border-brand-200">${escapeHtml(item.sportCategories)}</span>
+                        </div>
+                      </div>
+
+                      <h3 class="text-lg font-extrabold text-slate-900 leading-snug">${escapeHtml(item.title)}</h3>
+                      <div class="text-xs font-bold text-slate-500">
+                        ${escapeHtml(item.meta1 || '')} ${item.meta2 ? `• <span class="text-brand-700">${escapeHtml(item.meta2)}</span>` : ''}
+                      </div>
+
+                      <p class="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200/70">
+                        ${escapeHtml(item.summary)}
+                      </p>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
+                      <div class="truncate text-slate-500">
+                        ${item.extra && item.extra.startsWith('http')
+                          ? `<a href="${escapeAttr(item.extra)}" target="_blank" rel="noopener noreferrer" class="font-bold text-sky-700 hover:underline inline-flex items-center gap-1"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open Paper / DOI</a>`
+                          : escapeHtml(item.extra || '')}
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="copyText('${escapeAttr(item.title + '\\n' + item.summary)}', 'Copied to clipboard')" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold">
+                          Copy
+                        </button>
+                        <button onclick="deleteKnowledgeItem('${item.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function openKnowledgeModal() {
+      document.getElementById('kh-id').value = '';
+      document.getElementById('kh-title').value = '';
+      document.getElementById('kh-meta1').value = '';
+      document.getElementById('kh-meta2').value = '';
+      document.getElementById('kh-summary').value = '';
+      document.getElementById('kh-extra').value = '';
+      toggleKnowledgeFormFields(document.getElementById('kh-type').value);
+      document.getElementById('knowledge-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeKnowledgeModal() {
+      document.getElementById('knowledge-modal').classList.add('hidden');
+    }
+
+    function toggleKnowledgeFormFields(type) {
+      const doiBox = document.getElementById('kh-doi-box');
+      if (type === 'study') doiBox.classList.remove('hidden');
+      else doiBox.classList.add('hidden');
+    }
+
+    async function fetchPubMedOrDoi() {
+      const raw = (document.getElementById('kh-doi-input')?.value || '').trim();
+      const statusEl = document.getElementById('kh-fetch-status');
+      const btn = document.getElementById('kh-fetch-btn');
+      if (!raw) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Fetching...';
+      statusEl.textContent = 'Querying scientific registry...';
+      statusEl.className = 'text-[11px] text-sky-800 font-semibold block';
+
+      try {
+        const pmidMatch = raw.match(/(?:pubmed\.ncbi\.nlm\.nih\.gov\/|^)(\d{5,10})(?:\/|$)/i);
+        const doiMatch = raw.match(/(10\.\d{4,9}\/[-._;()/:A-Z0-9]+)/i);
+
+        if (pmidMatch) {
+          const pmid = pmidMatch[1];
+          const res = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${pmid}&retmode=json`);
+          const data = await res.json();
+          const rec = data?.result?.[pmid];
+          if (!rec || !rec.title) throw new Error('PubMed ID not found');
+          document.getElementById('kh-title').value = rec.title.replace(/\.$/, '');
+          document.getElementById('kh-meta1').value = rec.fulljournalname || rec.source || 'PubMed';
+          document.getElementById('kh-meta2').value = `${(rec.pubdate || '').slice(0, 4)} • PubMed Study`;
+          document.getElementById('kh-extra').value = `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`;
+          statusEl.textContent = `Imported PubMed #${pmid}! Add clinical summary below.`;
+          statusEl.className = 'text-[11px] text-emerald-700 font-bold block';
+        } else if (doiMatch) {
+          const doi = doiMatch[1];
+          const res = await fetch(`https://api.crossref.org/works/${encodeURIComponent(doi)}`);
+          const data = await res.json();
+          const work = data?.message;
+          if (!work) throw new Error('DOI not found');
+          document.getElementById('kh-title').value = (Array.isArray(work.title) ? work.title[0] : work.title || '').replace(/<[^>]+>/g, '');
+          document.getElementById('kh-meta1').value = Array.isArray(work['container-title']) ? work['container-title'][0] : '';
+          document.getElementById('kh-meta2').value = `${work.published?.['date-parts']?.[0]?.[0] || ''} • Peer-Reviewed`;
+          document.getElementById('kh-extra').value = `https://doi.org/${doi}`;
+          if (work.abstract) {
+            document.getElementById('kh-summary').value = work.abstract.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 450);
+          }
+          statusEl.textContent = `Imported DOI ${doi}!`;
+          statusEl.className = 'text-[11px] text-emerald-700 font-bold block';
+        } else {
+          throw new Error('Paste a valid DOI (10.xxxx/...) or PubMed ID.');
+        }
+      } catch (err) {
+        statusEl.textContent = err.message;
+        statusEl.className = 'text-[11px] text-rose-600 font-bold block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Fetch Citation';
+      }
+    }
+
+    function handleKnowledgeSubmit(event) {
+      event.preventDefault();
+      state.knowledge.unshift({
+        id: `kh-${Date.now()}`,
+        type: document.getElementById('kh-type').value,
+        ageGroups: document.getElementById('kh-age').value,
+        sportCategories: document.getElementById('kh-sport').value,
+        title: document.getElementById('kh-title').value.trim(),
+        meta1: document.getElementById('kh-meta1').value.trim(),
+        meta2: document.getElementById('kh-meta2').value.trim(),
+        summary: document.getElementById('kh-summary').value.trim(),
+        extra: document.getElementById('kh-extra').value.trim()
+      });
+      saveAll();
+      closeKnowledgeModal();
+      renderKnowledgeHub(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast('Added to Sports Knowledge Hub');
+    }
+
+    function deleteKnowledgeItem(id) {
+      state.knowledge = state.knowledge.filter(k => k.id !== id);
+      saveAll();
+      renderKnowledgeHub(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast('Entry removed');
+    }
+
+    // =========================================================================
+    // TAB 4: SPORTS PERFORMANCE CALCULATORS (RED-S, SWEAT RATE, PERIODIZATION)
+    // =========================================================================
+    function renderCalculatorsView(container) {
+      const a = state.athlete;
+      const ffm = (a.weightKg * (1 - a.bodyFatPct / 100)).toFixed(1);
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Sports Performance & RED-S Calculators</h1>
+            <p class="text-sm text-slate-500">Linked to active athlete (${escapeHtml(a.name)}, ${a.weightKg} kg, FFM ${ffm} kg). Calculate Energy Availability, Sweat Sodium, and Periodized Fueling.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Card 1: Energy Availability (EA) / RED-S Screener -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <i data-lucide="heart-pulse" class="w-5 h-5 text-rose-600"></i>
+                  1. Energy Availability (EA) & RED-S Screener
+                </h2>
+                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700">FFM: ${ffm} kg</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Daily Energy Intake (kcal)</label>
+                  <input id="calc-ea-in" type="number" value="${a.targetKcal}" oninput="calcRedSAndSweat()" class="w-full px-3.5 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Exercise Expenditure (kcal)</label>
+                  <input id="calc-ea-eee" type="number" value="750" oninput="calcRedSAndSweat()" class="w-full px-3.5 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+              </div>
+
+              <div id="ea-result-card" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-slate-600">Energy Availability (EA)</div>
+                  <div id="ea-result-val" class="text-2xl font-extrabold text-slate-900 mt-0.5">38.2 kcal/kg FFM</div>
+                </div>
+                <span id="ea-result-badge" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-600 text-white">Subclinical LEA</span>
+              </div>
+              <p class="text-xs text-slate-500">Formula: (Energy Intake − Exercise Energy Expenditure) ÷ Fat-Free Mass. Optimal ≥45 kcal/kg FFM/day; Clinical RED-S risk &lt;30 kcal/kg FFM/day.</p>
+            </div>
+
+            <!-- Card 2: Sweat Rate & Sodium Replacement -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
+              <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <i data-lucide="droplets" class="w-5 h-5 text-sky-600"></i>
+                2. Hourly Sweat Rate & Sodium Loss Calculator
+              </h2>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Pre Wt (kg)</label>
+                  <input id="sw-pre" type="number" step="0.1" value="${a.weightKg}" oninput="calcRedSAndSweat()" class="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Post Wt (kg)</label>
+                  <input id="sw-post" type="number" step="0.1" value="${(a.weightKg - 1.1).toFixed(1)}" oninput="calcRedSAndSweat()" class="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Fluid (mL)</label>
+                  <input id="sw-fluid" type="number" step="50" value="650" oninput="calcRedSAndSweat()" class="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Hours</label>
+                  <input id="sw-hrs" type="number" step="0.25" value="1.5" oninput="calcRedSAndSweat()" class="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3 bg-sky-50/80 border border-sky-200 rounded-2xl p-4 text-center">
+                <div>
+                  <div class="text-[11px] font-bold text-slate-500 uppercase">Sweat Rate</div>
+                  <div id="sw-rate-out" class="text-lg font-extrabold text-sky-950 mt-0.5">1,167 mL/hr</div>
+                </div>
+                <div>
+                  <div class="text-[11px] font-bold text-slate-500 uppercase">Body Mass Loss</div>
+                  <div id="sw-pct-out" class="text-lg font-extrabold text-emerald-700 mt-0.5">1.72%</div>
+                </div>
+                <div>
+                  <div class="text-[11px] font-bold text-slate-500 uppercase">Sodium Target</div>
+                  <div id="sw-na-out" class="text-lg font-extrabold text-amber-800 mt-0.5">~933 mg/hr</div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500">Keep dehydration &lt;2.0% body mass during competition. Post-session rehydration requires 1.5 L fluid per kg weight deficit.</p>
+            </div>
+          </div>
+        </div>
+      `;
+      calcRedSAndSweat();
+    }
+
+    function calcRedSAndSweat() {
+      const a = state.athlete;
+      const ffm = a.weightKg * (1 - a.bodyFatPct / 100);
+      const intake = parseFloat(document.getElementById('calc-ea-in')?.value) || 2500;
+      const eee = parseFloat(document.getElementById('calc-ea-eee')?.value) || 600;
+      const ea = ffm > 0 ? (intake - eee) / ffm : 0;
+
+      const valEl = document.getElementById('ea-result-val');
+      const badgeEl = document.getElementById('ea-result-badge');
+      const cardEl = document.getElementById('ea-result-card');
+      if (valEl && badgeEl && cardEl) {
+        valEl.textContent = `${ea.toFixed(1)} kcal/kg FFM/d`;
+        if (ea < 30) {
+          cardEl.className = 'p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between';
+          badgeEl.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold bg-rose-600 text-white';
+          badgeEl.textContent = 'Clinical RED-S Risk (<30)';
+        } else if (ea < 45) {
+          cardEl.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between';
+          badgeEl.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-600 text-white';
+          badgeEl.textContent = 'Subclinical LEA (30–44)';
+        } else {
+          cardEl.className = 'p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between';
+          badgeEl.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-600 text-white';
+          badgeEl.textContent = 'Optimal EA (≥45)';
+        }
+      }
+
+      const pre = parseFloat(document.getElementById('sw-pre')?.value) || 64;
+      const post = parseFloat(document.getElementById('sw-post')?.value) || 63;
+      const fluid = parseFloat(document.getElementById('sw-fluid')?.value) || 500;
+      const hrs = parseFloat(document.getElementById('sw-hrs')?.value) || 1;
+
+      const lossMl = Math.max(0, (pre - post) * 1000 + fluid);
+      const rate = hrs > 0 ? Math.round(lossMl / hrs) : 0;
+      const pct = pre > 0 ? ((pre - post) / pre) * 100 : 0;
+      const na = Math.round((rate / 1000) * 800);
+
+      const rateEl = document.getElementById('sw-rate-out');
+      if (rateEl) {
+        rateEl.textContent = `${rate.toLocaleString()} mL/hr`;
+        document.getElementById('sw-pct-out').textContent = `${pct.toFixed(2)}%`;
+        document.getElementById('sw-na-out').textContent = `~${na} mg/hr`;
+      }
+    }
+
+    // =========================================================================
+    // TAB 5: SPORTS & NEPALI FOOD COMPOSITION DATABASE
+    // =========================================================================
+    function renderFoodsView(container) {
+      const categories = ['All', ...new Set(state.foods.map(f => f.category))];
+      const filtered = state.foods.filter(f => {
+        if (state.foodCatFilter !== 'All' && f.category !== state.foodCatFilter) return false;
+        if (state.foodSearch && !JSON.stringify(f).toLowerCase().includes(state.foodSearch)) return false;
+        return true;
+      });
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Sports & Nepali Athlete Food Database (per 100g)</h1>
+              <p class="text-sm text-slate-500">Compare carbs, protein, fiber, and sports timing notes—or send any food directly to the Diet Chart Builder.</p>
+            </div>
+            <button onclick="openNewFoodModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-xs transition shrink-0">
+              <i data-lucide="plus" class="w-4 h-4"></i> Add Custom Food
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col sm:flex-row gap-3 shadow-2xs">
+            <input
+              type="text"
+              value="${escapeAttr(state.foodSearch)}"
+              oninput="state.foodSearch = this.value.trim().toLowerCase(); renderFoodsView(document.getElementById('main-workspace')); lucide.createIcons();"
+              placeholder="Search chiura, sattu, kodo, phapar, dal, eggs, chicken, paneer..."
+              class="flex-1 px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl"
+            />
+            <select onchange="state.foodCatFilter=this.value; renderFoodsView(document.getElementById('main-workspace')); lucide.createIcons();" class="px-3.5 py-2.5 text-sm font-semibold bg-slate-50 border border-slate-200 rounded-xl">
+              ${categories.map(c => `<option value="${c}" ${state.foodCatFilter === c ? 'selected' : ''}>${c}</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-200 text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                    <th class="py-3.5 px-5">Food Item (100g)</th>
+                    <th class="py-3.5 px-3 text-right">Energy</th>
+                    <th class="py-3.5 px-3 text-right">Carbs</th>
+                    <th class="py-3.5 px-3 text-right">Protein</th>
+                    <th class="py-3.5 px-3 text-right">Fat</th>
+                    <th class="py-3.5 px-3 text-right">Fiber</th>
+                    <th class="py-3.5 px-4">Fueling Timing Notes</th>
+                    <th class="py-3.5 px-5 text-right">Quick Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${filtered.map(f => `
+                    <tr class="hover:bg-brand-50/40 transition">
+                      <td class="py-3.5 px-5">
+                        <div class="font-bold text-slate-900">${escapeHtml(f.name)}</div>
+                        <span class="text-[11px] font-semibold text-brand-700">${escapeHtml(f.category)}</span>
+                      </td>
+                      <td class="py-3.5 px-3 text-right font-bold text-slate-800">${f.kcal} kcal</td>
+                      <td class="py-3.5 px-3 text-right font-extrabold text-amber-700">${f.carbs} g</td>
+                      <td class="py-3.5 px-3 text-right font-extrabold text-sky-700">${f.protein} g</td>
+                      <td class="py-3.5 px-3 text-right text-slate-600">${f.fat} g</td>
+                      <td class="py-3.5 px-3 text-right font-semibold ${f.fiber <= 2 ? 'text-emerald-700' : 'text-slate-600'}">${f.fiber} g</td>
+                      <td class="py-3.5 px-4 text-xs text-slate-600 max-w-xs">${escapeHtml(f.notes)}</td>
+                      <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                        <button onclick="quickSendFoodToLunch('${f.id}')" class="px-3 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-600 text-brand-800 hover:text-white border border-brand-200 text-xs font-bold transition">
+                          + Diet Chart
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openNewFoodModal() {
+      document.getElementById('new-food-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeNewFoodModal() {
+      document.getElementById('new-food-modal').classList.add('hidden');
+    }
+
+    function handleNewFoodSubmit(event) {
+      event.preventDefault();
+      const fd = new FormData(event.target);
+      state.foods.unshift({
+        id: `f-${Date.now()}`,
+        name: fd.get('name').trim(),
+        category: fd.get('category'),
+        kcal: parseFloat(fd.get('kcal')) || 0,
+        carbs: parseFloat(fd.get('carbs')) || 0,
+        protein: parseFloat(fd.get('protein')) || 0,
+        fat: parseFloat(fd.get('fat')) || 0,
+        fiber: parseFloat(fd.get('fiber')) || 0,
+        notes: (fd.get('notes') || 'Custom sports food').trim()
+      });
+      saveAll();
+      event.target.reset();
+      closeNewFoodModal();
+      renderFoodsView(document.getElementById('main-workspace'));
+      lucide.createIcons();
+      showToast('Food added to database');
+    }
+
+    function quickSendFoodToLunch(foodId) {
+      const food = state.foods.find(f => f.id === foodId);
+      if (!food) return;
+      if (!state.dietChart.lunch) state.dietChart.lunch = [];
+      state.dietChart.lunch.push({
+        id: `q-${Date.now()}`,
+        name: food.name,
+        serving: '100g',
+        kcal: food.kcal,
+        carbs: food.carbs,
+        protein: food.protein,
+        fat: food.fat
+      });
+      saveAll();
+      switchTab('dietchart');
+      showToast(`Added 100g ${food.name} to Lunch slot`);
+    }
+
+    // =========================================================================
+    // BACKUP, RESTORE & UTILITIES
+    // =========================================================================
+    function exportAllData() {
+      const blob = new Blob([JSON.stringify({
+        exportedAt: new Date().toISOString(),
+        athlete: state.athlete,
+        history: state.history,
+        dietChart: state.dietChart,
+        knowledge: state.knowledge,
+        foods: state.foods
+      }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nutrivault-sports-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Full backup exported');
+    }
+
+    function importAllData(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.athlete) state.athlete = data.athlete;
+          if (data.history) state.history = data.history;
+          if (data.dietChart) state.dietChart = data.dietChart;
+          if (data.knowledge) state.knowledge = data.knowledge;
+          if (data.foods) state.foods = data.foods;
+          saveAll();
+          switchTab(state.activeTab);
+          showToast('Backup restored successfully');
+        } catch (err) {
+          showToast('Invalid JSON backup file');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function copyText(text, msg = 'Copied') {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(msg);
+      } catch (e) {
+        showToast('Copy failed');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      const el = document.createElement('div');
+      el.className = 'pointer-events-auto flex items-center gap-2 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-lg border border-slate-700';
+      el.innerHTML = `<span class="w-2 h-2 rounded-full bg-brand-400"></span><span>${escapeHtml(msg)}</span>`;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 2600);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str || '');
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
